@@ -39,10 +39,9 @@ io.on('connection', socket => {
     socket.on('sendMessage', ({ message }, callback) => {
         
         const user = getUser(socket.id)
-        // const time = dayjs()
-        // console.log(time)
 
         io.to(user.room).emit('message', { user: user.name, text: message, time: Date.now() })
+
         callback()
     })
 
@@ -51,6 +50,7 @@ io.on('connection', socket => {
         if(user){
             io.to(user.room).emit('message', { user: 'admin', text: `${ user.name } has left.`})
             io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room) })
+            io.emit('allRooms', { rooms: getRoomsWithUsers() })
         }
     })
 })
